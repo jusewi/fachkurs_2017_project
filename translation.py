@@ -40,11 +40,20 @@ class Translation(processes.Process):
         """
         # Ribo binds with certain chance
         # if not bound already and if ribosomes available
-        if mrna.bindings == [] and self.model.states[Ribo].molecules['free ribos'] > 0:
-            if random.random() < 0.5:
-                mrna.bindings.append('ribo')
-                self.model.states[Ribo].take('free ribos')
-                self.model.states[Ribo].add(Ribo('bound ribos'))
+
+
+        # wenn anzahl der gebundenen ribosomen weniger sind als maximal gebunden werden können
+        # kann ich noch ein ribosomen binden aber nur wenn auch position0 frei oder nur nach 2schritten vorbei
+        if self.model.timestep%2 == 0:# es kann nur in jeden zweiten Zeitschritt ein neues Ribo binden
+            if mrna.bindings == [] and self.model.states[Ribo].molecules['free ribos'] > 0:
+                if random.random() < 0.5:
+                    mrna.bindings.append('ribo')
+                    self.model.states[Ribo].take('free ribos')
+                    self.model.states[Ribo].add(Ribo('bound ribos'))
+            #print (mrna.bindings)
+            #print (mrna.sequence)
+
+
 
 
     def elongate(self, mrna):
@@ -54,26 +63,30 @@ class Translation(processes.Process):
         Terminate if the ribosome reaches a STOP codon.
         """
         if 'ribo' in mrna.bindings:
+            #print (mrna.name)
             prot = Protein(mrna.name.lower().capitalize())  # protein names are like mRNA names, but only capitalized
             
             start = False
 
             for i in range(int(len(mrna.sequence) / 3)):  # go through codons
+
                 codon = mrna.sequence[ i*3 : i*3+3 ]
                 amino_acid = database.ModelData.codon_to_amino_acid[codon]
                 #print(codon)
-                if amino_acid == 'M': # reached Start-Codon
-                    start = True
-                if amino_acid != '*' and start == True:  # if STOP codon
-                    prot.add_monomer(amino_acid)
+                #if amino_acid == 'M': # reached Start-Codon
+                    #start = True
+                if amino_acid != '*': #and start == True:  # if STOP codon
+                    prot.add_monomer(amino_acid)#wenn kein stop-codon , dann appende AS an protein
                     #print(prot.sequence)
+
                 elif amino_acid == '*':
                     self.model.states[ Protein ].add(prot)
                     mrna.bindings.remove('ribo')
                     self.model.states[ Ribo ].take('bound ribos')
                     self.model.states[ Ribo ].add(Ribo('free ribos'))
-                    return prot
 
+                    return prot
+                    
     def terminate(self, mrna):
         """
         Splits the ribosome/MRNA complex and returns a protein.
