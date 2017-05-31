@@ -45,12 +45,12 @@ class ModelData:
             alphabet = list(self.codon_to_amino_acid.keys())
             mrnas = []
             genes = {}
-            for _ in range(10):
-                sequence = ''.join([rnd.choice(alphabet) for _ in range(rnd.randint(50, 500))])
-                #sequence = 'AUG' + sequence
+            for _ in range(2):
+                sequence = ''.join([rnd.choice(alphabet) for _ in range(rnd.randint(5, 10))])
+                sequence = 'AUG' + sequence
                 genes[''.join([rnd.choice(string.ascii_uppercase) for _ in range(3)])] = sequence
 
             for gene in genes:
-                for i in range(rnd.randint(1, 10)):
+                for i in range(rnd.randint(1, 2)):
                     mrnas.append((gene, genes[gene]))
             return mrnas
