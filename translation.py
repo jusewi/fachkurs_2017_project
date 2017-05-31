@@ -54,7 +54,7 @@ class Translation(processes.Process):
             #print (mrna.bindings)
             #print (mrna.sequence)
         """
-        mrna.bindings = ([[0,[]]]*len(mrna.sequence))
+        mrna.bindings = ([[0,0,[]]]*len(mrna.sequence))
         #print (mrna.bindings)
         print (mrna.sequence)
 
@@ -62,23 +62,43 @@ class Translation(processes.Process):
             if mrna.sequence[posi] == 'A':
                 if mrna.sequence[posi +1] == 'U':
                     if mrna.sequence[posi +2] == 'G':
-                        mrna.bindings[posi]= [1,[]]
+                        mrna.bindings[posi]= [1,0,[]]
                         #mrna.bindings[posi+1]=1
                         #mrna.bindings[posi+2]=1
             elif mrna.sequence[posi] == 'G':
                 if mrna.sequence[posi +1] == 'U':
                     if mrna.sequence[posi +2] == 'G':
-                        mrna.bindings[posi[0]]=[1,[]]
+                        mrna.bindings[posi]=[1,0,[]]
                         #mrna.bindings[posi+1]=1
                         #mrna.bindings[posi+2]=1
             elif mrna.sequence[posi] == 'U':
                 if mrna.sequence[posi +1] == 'U':
                     if mrna.sequence[posi +2] == 'G':
-                        mrna.bindings[posi[0]]=[1,[]]
+                        mrna.bindings[posi]=[1,0,[]]
                         #mrna.bindings[posi+1]=1
                         #mrna.bindings[posi+2]=1
-                        
-        print (mrna.bindings)
+        # alles für erste Base
+        print (mrna.bindings[0][0])#listen eintrag  startposition?            
+        print (mrna.bindings[0][1])#listen eintrag  ribosomen gebunden?
+        print (mrna.bindings[0][2])#listen eintrag  liste des translationscodes
+
+        # Ribosomen binden:
+        if self.model.states[Ribo].molecules['free ribos'] > 0:
+            for pos in range((len(mrna.bindings))-2):
+                if mrna.bindings[pos][0]==1:# wenn pos eine Startposition
+                    #belege 50% der Startstellen mit ribosomen
+                    if random.random() < 0.5:
+                        mrna.bindings[pos][1] = 1
+                        self.model.states[Ribo].take('free ribos')
+                        self.model.states[Ribo].add(Ribo('bound ribos'))
+
+
+        # alles für erste Base
+        print (mrna.bindings[0][0])#listen eintrag  startposition?            
+        print (mrna.bindings[0][1])#listen eintrag  ribosomen gebunden?
+        print (mrna.bindings[0][2])#listen eintrag  liste des translationscodes
+
+
 
 
 
@@ -116,6 +136,7 @@ class Translation(processes.Process):
 
                     return prot
         """
+
                     
     def terminate(self, mrna):
         """
