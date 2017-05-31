@@ -38,6 +38,7 @@ class Translation(processes.Process):
 
         @type mrna: MRNA
         """
+        """
         # Ribo binds with certain chance
         # if not bound already and if ribosomes available
 
@@ -46,12 +47,39 @@ class Translation(processes.Process):
         # kann ich noch ein ribosomen binden aber nur wenn auch position0 frei oder nur nach 2schritten vorbei
         if self.model.timestep%2 == 0:# es kann nur in jeden zweiten Zeitschritt ein neues Ribo binden
             if mrna.bindings == [] and self.model.states[Ribo].molecules['free ribos'] > 0:
-                if random.random() < 0.5:
+                if random.random() < 0.8:
                     mrna.bindings.append('ribo')
                     self.model.states[Ribo].take('free ribos')
                     self.model.states[Ribo].add(Ribo('bound ribos'))
             #print (mrna.bindings)
             #print (mrna.sequence)
+        """
+        mrna.bindings = ([[0,[]]]*len(mrna.sequence))
+        #print (mrna.bindings)
+        print (mrna.sequence)
+
+        for posi in range((len(mrna.bindings))-2):
+            if mrna.sequence[posi] == 'A':
+                if mrna.sequence[posi +1] == 'U':
+                    if mrna.sequence[posi +2] == 'G':
+                        mrna.bindings[posi]= [1,[]]
+                        #mrna.bindings[posi+1]=1
+                        #mrna.bindings[posi+2]=1
+            elif mrna.sequence[posi] == 'G':
+                if mrna.sequence[posi +1] == 'U':
+                    if mrna.sequence[posi +2] == 'G':
+                        mrna.bindings[posi[0]]=[1,[]]
+                        #mrna.bindings[posi+1]=1
+                        #mrna.bindings[posi+2]=1
+            elif mrna.sequence[posi] == 'U':
+                if mrna.sequence[posi +1] == 'U':
+                    if mrna.sequence[posi +2] == 'G':
+                        mrna.bindings[posi[0]]=[1,[]]
+                        #mrna.bindings[posi+1]=1
+                        #mrna.bindings[posi+2]=1
+                        
+        print (mrna.bindings)
+
 
 
 
@@ -61,6 +89,7 @@ class Translation(processes.Process):
         Elongate the new protein by the correct amino acid. Check if an
         MRNA is bound and if ribosome can move to next codon.
         Terminate if the ribosome reaches a STOP codon.
+        """
         """
         if 'ribo' in mrna.bindings:
             #print (mrna.name)
@@ -86,6 +115,7 @@ class Translation(processes.Process):
                     self.model.states[ Ribo ].add(Ribo('free ribos'))
 
                     return prot
+        """
                     
     def terminate(self, mrna):
         """
