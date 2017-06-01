@@ -45,8 +45,8 @@ class ModelData:
             alphabet = list(self.codon_to_amino_acid.keys())
             mrnas = []
             genes = {}
-            for _ in range(2):
-                sequence = ''.join([rnd.choice(alphabet) for _ in range(rnd.randint(5, 10))])
+            for _ in range(1):
+                sequence = ''.join([rnd.choice(alphabet) for _ in range(rnd.randint(3, 10))])
                 sequence = 'AUG' + sequence
                 genes[''.join([rnd.choice(string.ascii_uppercase) for _ in range(3)])] = sequence
 
