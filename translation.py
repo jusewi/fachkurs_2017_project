@@ -78,9 +78,9 @@ class Translation(processes.Process):
                         #mrna.bindings[posi+1]=1
                         #mrna.bindings[posi+2]=1
         # alles für erste Base
-        print (mrna.bindings[0][0])#listen eintrag  startposition?            
-        print (mrna.bindings[0][1])#listen eintrag  ribosomen gebunden?
-        print (mrna.bindings[0][2])#listen eintrag  liste des translationscodes
+        #print (mrna.bindings[0][0])#listen eintrag  startposition?            
+        #print (mrna.bindings[0][1])#listen eintrag  ribosomen gebunden?
+        #print (mrna.bindings[0][2])#listen eintrag  liste des translationscodes
 
         # Ribosomen binden:
         if self.model.states[Ribo].molecules['free ribos'] > 0:
@@ -94,13 +94,11 @@ class Translation(processes.Process):
 
 
         # alles für erste Base
-        print (mrna.bindings[0][0])#listen eintrag  startposition?            
-        print (mrna.bindings[0][1])#listen eintrag  ribosomen gebunden?
-        print (mrna.bindings[0][2])#listen eintrag  liste des translationscodes
-
-
-
-
+        #print (mrna.bindings[0][0])#listen eintrag  startposition?            
+        #print (mrna.bindings[0][1])#listen eintrag  ribosomen gebunden?
+        #print (mrna.bindings[0][2])#listen eintrag  liste des translationscodes
+        print (mrna.bindings)#listen eintrag  startposition?            
+        
 
 
 
@@ -136,6 +134,35 @@ class Translation(processes.Process):
 
                     return prot
         """
+        for _ in range(1):
+            # Stop Fkt. noch nicht fertig und auch noch nicht in initialisierung
+
+            #hier muss dann der mittelteil von elonge rein
+
+
+
+
+            # lauf funktion
+
+            for basenposi in range(len(mrna.bindings)-1,-1,-1): #laufe vom vorletzten bis ersten eintrag
+                #print (basenposi)
+                if mrna.bindings[basenposi][1] == 1:#wenn ein Ribo gebunden ist
+                    #entferne alte Riboposition 
+                    mrna.bindings[basenposi][1] = 0
+                    #setze neue Ribosomenposition 
+                    mrna.bindings[basenposi+1][1] = 1
+                    #kopiere alten Sequenzteil in neuen
+                    mrna.bindings[basenposi+1][2] = mrna.bindings[basenposi][2]
+                    #lösche alten Sequenzteil aus alter Position
+                    mrna.bindings[basenposi][2]=[]
+                    #ergenze alte Sequenz an neuer Position mit vorhergehender Base
+                    mrna.bindings[basenposi+1][2].append(mrna.sequence[basenposi])
+
+            # alles für erste Base
+        print (mrna.bindings)        
+        
+
+
 
                     
     def terminate(self, mrna):
