@@ -52,8 +52,8 @@ class Translation(processes.Process):
 
 
           
-        print(mrna.sequence)
-        print(len(mrna.sequence)) 
+        #print(mrna.sequence)
+        #print(len(mrna.sequence)) 
 
         for posi in range((len(mrna.bindings))-2):
             if mrna.sequence[posi] == 'A':
@@ -74,7 +74,7 @@ class Translation(processes.Process):
                         mrna.bindings[posi][0] = 1
                         break
 
-        print(mrna.bindings)
+        #print(mrna.bindings)
                         
 
         
@@ -124,7 +124,7 @@ class Translation(processes.Process):
                                 mrna.bindings[pos][1] = 1
                                 self.model.states[Ribo].take('free ribos')
                                 self.model.states[Ribo].add(Ribo('bound ribos'))
-                                print(self.model.states[Ribo].molecules['free ribos'])
+                                #print(self.model.states[Ribo].molecules['free ribos'])
 
 
 
@@ -181,7 +181,6 @@ class Translation(processes.Process):
                     else:
                         prot = Protein(mrna.name.lower().capitalize())
                         self.model.states[ Protein ].add(prot)
-                        mrna.bindings.remove('ribo')
                         self.model.states[ Ribo ].take('bound ribos')
                         self.model.states[ Ribo ].add(Ribo('free ribos'))
                         return prot
@@ -197,8 +196,8 @@ class Translation(processes.Process):
                     #prot = Protein(mrna.name.lower().capitalize())
 
             
-        print(mrna.bindings)  
-        print(' ') 
+       # print(mrna.bindings)  
+        #print(' ') 
 
 
 
