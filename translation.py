@@ -29,7 +29,7 @@ class Translation(processes.Process):
         """
         for mrna_id in self.model.states[MRNA].molecules:
             for mrna in self.model.states[MRNA].molecules[mrna_id]:
-                self.initiate(mrna)
+                #self.initiate(mrna)
                 self.elongate(mrna)
 
     def initiate(self, mrna):
@@ -110,7 +110,7 @@ class Translation(processes.Process):
 
 
 
-        for _ in range(2):
+        for _ in range(20):
 
             # Ribosomen binden:        
 
@@ -169,21 +169,36 @@ class Translation(processes.Process):
                     #entferne alte Riboposition 
                     mrna.bindings[basenposi][1] = 0
                     #setze neue Ribosomenposition 
-                    mrna.bindings[basenposi+3][1] = 1
+                    mrna.bindings[basenposi+1][1] = 1
                     #kopiere alten Sequenzteil in neuen
-                    mrna.bindings[basenposi+3][2] = (mrna.bindings[basenposi][2]).copy()
+                    mrna.bindings[basenposi+1][2] = (mrna.bindings[basenposi][2]).copy()
                     #lösche alten Sequenzteil aus alter Position
                     mrna.bindings[basenposi][2]=[]
-                    #ergenze alte Sequenz an neuer Position mit vorhergehender Base
-                    mrna.bindings[basenposi+3][2].append(mrna.sequence[basenposi:basenposi+3])
+                    #ergenze alte Sequenz an neuer Position mit vorhergehender Base wenn keine Stopsequenz
+                    AS=database.ModelData.codon_to_amino_acid[mrna.sequence[basenposi*3:basenposi*3+3]]
+                    if AS != '*':  # if STOP codon
+                         mrna.bindings[basenposi+1][2].append(AS)
+                    else:
+                        prot = Protein(mrna.name.lower().capitalize())
+                        self.model.states[ Protein ].add(prot)
+                        mrna.bindings.remove('ribo')
+                        self.model.states[ Ribo ].take('bound ribos')
+                        self.model.states[ Ribo ].add(Ribo('free ribos'))
+                        return prot
+                        #entferne neue Riboposition 
+                        mrna.bindings[basenposi+1][1] = 0
+                        #entferne sequnz
+                        mrna.bindings[basenposi+1][2] = []
+                        
 
+                    
                     #codon = mrna.sequence[ * 3:i * 3 + 3 ]
                     #amino_acid = database.ModelData.codon_to_amino_acid[codon]
                     #prot = Protein(mrna.name.lower().capitalize())
 
             
-            print(mrna.bindings)  
-            print(' ') 
+        print(mrna.bindings)  
+        print(' ') 
 
 
 
