@@ -50,7 +50,7 @@ class MRNA(Polymer):
 
     nucleic_acid_weights = ModelData.nucleic_acid_weights
 
-    def __init__(self, name, sequence=''):
+    def __init__(self, name,sequence=''):
 
         super().__init__(name, sequence, self.nucleic_acid_weights)
 
