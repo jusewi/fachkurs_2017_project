@@ -53,6 +53,36 @@ class MRNA(Polymer):
     def __init__(self, name,sequence=''):
 
         super().__init__(name, sequence, self.nucleic_acid_weights)
+        self.busu()
+
+    def busu(self):
+        for ooo in range(int(len(self.sequence)/3)):
+            self.bindings.append([0,0,[]])
+
+
+          
+        #print(self.sequence)
+        #print(len(self.sequence)) 
+
+        for posi in range((len(self.bindings))-2):
+            if self.sequence[posi] == 'A':
+                if self.sequence[posi +1] == 'U':
+                    if self.sequence[posi +2] == 'G':
+                        self.bindings[posi][0] = 1
+                        break
+
+            elif self.sequence[posi] == 'G':
+                if self.sequence[posi +1] == 'U':
+                    if self.sequence[posi +2] == 'G':
+                        self.bindings[posi][0] = 1
+                        break
+
+            elif self.sequence[posi] == 'U':
+                if self.sequence[posi +1] == 'U':
+                    if self.sequence[posi +2] == 'G':
+                        self.bindings[posi][0] = 1
+                        break
+
 
 
 class MoleculeCollection:
