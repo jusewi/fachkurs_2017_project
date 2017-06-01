@@ -47,7 +47,7 @@ class ModelData:
             genes = {}
             for _ in range(1):
                 sequence = ''.join([rnd.choice(alphabet) for _ in range(rnd.randint(3, 10))])
-                sequence = 'AUG' + sequence
+                sequence = 'AUG' + sequence + 'UGA'
                 genes[''.join([rnd.choice(string.ascii_uppercase) for _ in range(3)])] = sequence
 
             for gene in genes:
