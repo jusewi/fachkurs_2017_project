@@ -83,5 +83,5 @@ class Model:
 
 if __name__ == "__main__":
     c = Model()
-    c.simulate(100, log=True)
+    c.simulate(10, log=True)
 
