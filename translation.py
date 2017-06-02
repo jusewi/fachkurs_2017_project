@@ -110,39 +110,50 @@ class Translation(processes.Process):
 
 
 
-        for _ in range(20):
+        for _ in range(10):
 
             # Ribosomen binden:        
-
-            for pos in range((len(mrna.bindings))-2):
+            #print(mrna.bindings)
+            for pos in range((len(mrna.bindings))):
                 if mrna.bindings[pos][0]==1:# wenn pos eine Startposition
                     #belege 50% der Startstellen mit ribosomen
                     #print(self.model.states[Ribo].molecules['free ribos'])
                     if mrna.bindings[pos][1]==0:
-                        if random.random() < 1:
+                        bindungsw=self.model.states[Ribo].molecules['free ribos']/(self.model.states[Ribo].count())
+                        #print(bindungsw)
+                        if random.random() < 1:#bindungsw:
                             if self.model.states[Ribo].molecules['free ribos'] > 0:
                                 mrna.bindings[pos][1] = 1
                                 self.model.states[Ribo].take('free ribos')
                                 self.model.states[Ribo].add(Ribo('bound ribos'))
-                                #print(self.model.states[Ribo].molecules['free ribos'])
+                                #print(self.model.states[Ribo].molecules['free ribos']+self.model.states[Ribo].molecules['bound ribos'])
+            print(mrna.bindings)
 
-
-
-
-
-
-            '''
             # für den Fall, dass Ribosom das Ende erreicht hat und kei StoP codon
 
             if mrna.bindings[len(mrna.bindings)-1][1] == 1:
+                print('a')
                 #entferne alte Riboposition 
                 mrna.bindings[len(mrna.bindings)-1][1] = 0
                 #setze Ribo frei
                 self.model.states[Ribo].take('bound ribos')
                 self.model.states[Ribo].add(Ribo('free ribos'))
                 #ergenze alte Sequenz  mit Stop Base
-                mrna.bindings[len(mrna.bindings)-1][2].append(mrna.sequence[len(mrna.bindings)-1])
-                # baue protein aus sequenz
+                print(len(mrna.bindings)*3-3)
+                print(len(mrna.sequence))
+                AS=database.ModelData.codon_to_amino_acid[mrna.sequence[len(mrna.bindings)*3-3:len(mrna.bindings)*3]]
+                mrna.bindings[len(mrna.bindings)-1][2].append(AS)
+
+                prot = Protein(mrna.name.lower().capitalize())
+                self.model.states[ Protein ].add(prot)
+                return prot
+                #entferne neue Riboposition 
+                mrna.bindings[basenposi+1][1] = 0
+                #entferne sequnz
+                mrna.bindings[basenposi+1][2] = []
+
+
+                '''# baue protein aus sequenz
 
                 for i in range(int(len(mrna.bindings[len(mrna.bindings)-1][2]) / 3)):  # go through codons
                     codon = mrna.sequence[ i * 3:i * 3 + 3 ]
@@ -157,13 +168,13 @@ class Translation(processes.Process):
                         self.model.states[ Ribo ].add(Ribo('free ribos'))
                         return prot
 
-                #lösche alten Sequenzteil aus alter Position
-                mrna.bindings[len(mrna.bindings)-1][2]=[]
-             '''   
+                    #lösche alten Sequenzteil aus alter Position
+                    mrna.bindings[len(mrna.bindings)-1][2]=[]'''
+                
 
             # lauf funktion
 
-            for basenposi in range(len(mrna.bindings)-4,-1,-1): #laufe vom vorletzten bis ersten eintrag
+            for basenposi in range(len(mrna.bindings)-2,-1,-1): #laufe vom vorletzten bis ersten eintrag
                 #print (basenposi)
                 if mrna.bindings[basenposi][1] == 1:#wenn ein Ribo gebunden ist
                     #entferne alte Riboposition 
@@ -176,6 +187,7 @@ class Translation(processes.Process):
                     mrna.bindings[basenposi][2]=[]
                     #ergenze alte Sequenz an neuer Position mit vorhergehender Base wenn keine Stopsequenz
                     AS=database.ModelData.codon_to_amino_acid[mrna.sequence[basenposi*3:basenposi*3+3]]
+                    #print(mrna.sequence[basenposi*3:basenposi*3+3])
                     if AS != '*':  # if STOP codon
                          mrna.bindings[basenposi+1][2].append(AS)
                     else:
@@ -189,17 +201,6 @@ class Translation(processes.Process):
                         #entferne sequnz
                         mrna.bindings[basenposi+1][2] = []
                         
-
-                    
-                    #codon = mrna.sequence[ * 3:i * 3 + 3 ]
-                    #amino_acid = database.ModelData.codon_to_amino_acid[codon]
-                    #prot = Protein(mrna.name.lower().capitalize())
-
-            
-       # print(mrna.bindings)  
-        #print(' ') 
-
-
 
     def terminate(self, mrna):
         """
